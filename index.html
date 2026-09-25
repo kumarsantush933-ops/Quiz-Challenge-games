@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Challenge V3 + V4</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);color:#172033}
+.app{max-width:900px;margin:auto;padding:18px}.card{background:white;border-radius:22px;padding:22px;box-shadow:0 10px 30px #0001;margin-top:14px}
+h1,h2,p{margin-top:0}.hero{text-align:center;padding:28px 18px}.logo{font-size:48px}.muted{color:#64748b}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.cat{border:0;border-radius:16px;padding:18px;text-align:left;background:#f1f5f9;cursor:pointer;font-size:16px;font-weight:bold}.cat:hover{transform:translateY(-2px);background:#e2e8f0}
+.cat span{font-size:28px;display:block;margin-bottom:8px}
+button{border:0;border-radius:13px;padding:13px 18px;cursor:pointer;font-weight:bold;font-size:15px}.primary{background:#4f46e5;color:white}.secondary{background:#e2e8f0;color:#172033}.danger{background:#fee2e2;color:#991b1b}
+.top{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;align-items:center}.stats{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:8px 11px;border-radius:999px;background:#f1f5f9;font-weight:bold;font-size:14px}
+.progress{height:9px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:15px 0}.bar{height:100%;background:#4f46e5;width:0%;transition:.3s}
+.option{display:block;width:100%;text-align:left;margin:10px 0;background:#f8fafc;border:2px solid #e2e8f0}.option.correct{background:#dcfce7;border-color:#22c55e}.option.wrong{background:#fee2e2;border-color:#ef4444}.option:disabled{cursor:not-allowed}
+.result{text-align:center}.score{font-size:54px;font-weight:900;color:#4f46e5}
+.subject{margin:8px 0;padding:10px;border-radius:12px;background:#eef2ff}
+.small{font-size:13px}.hidden{display:none!important}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.app{padding:10px}.card{padding:16px}.hero{padding:18px 8px}.score{font-size:44px}}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px}
+.version{font-size:11px;background:#4f46e5;color:#fff;border-radius:99px;padding:5px 8px;margin-left:7px}
+.profileRow,.tools{display:flex;gap:8px;max-width:560px;margin:15px auto;justify-content:center}
+input{border:2px solid #e2e8f0;border-radius:12px;padding:12px 14px;font-size:15px;outline:none;width:100%;background:transparent}
+input:focus{border-color:#6366f1}.tools input{max-width:420px}
+.historyItem{display:flex;justify-content:space-between;gap:10px;padding:13px;border-bottom:1px solid #e2e8f0}
+.dark{background:#0f172a;color:#e5e7eb}.dark .card{background:#1e293b}.dark .cat,.dark .option{background:#334155;color:#e5e7eb;border-color:#475569}.dark input,.dark .secondary,.dark .pill{background:#334155;color:#e5e7eb;border-color:#475569}
+textarea{background:transparent;color:inherit}.dark textarea{border-color:#475569!important}
+.page p,.page li{line-height:1.65}.page h2{margin-top:18px}
+@media(max-width:600px){.profileRow,.tools{flex-direction:column}.topbar{padding-top:4px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div><strong>🎯 Quiz Challenge</strong><span class="version">V6</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="secondary" onclick="showPage('about')">About</button>
+      <button class="secondary" onclick="showPage('privacy')">Privacy</button>
+      <button class="secondary" onclick="showPage('contact')">Contact</button>
+      <button class="secondary" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+  <div id="home" class="card hero">
+    <div class="logo">🎯</div>
+    <h1>Quiz Challenge</h1>
+    <p class="muted">V5 FINAL • Quiz, Levels, Streak, Progress & Practice</p>
+    <div class="profileRow">
+      <input id="playerName" maxlength="20" placeholder="अपना नाम लिखें">
+      <button class="primary" onclick="savePlayer()">Save Profile</button>
+    </div>
+    <div id="welcome" class="small muted"></div>
+    <div class="stats" style="justify-content:center;margin:18px 0">
+      <div class="pill">🏆 Best Score: <span id="homeBest">0</span></div>
+      <div class="pill">🔥 Best Streak: <span id="homeStreak">0</span></div>
+    </div>
+    <div class="tools">
+      <input id="searchBox" oninput="filterCategories()" placeholder="🔎 Category खोजें...">
+      <button class="secondary" onclick="showHistory()">📊 History</button>
+    </div>
+    <h2>Category चुनें</h2>
+    <div id="categoryGrid" class="grid">
+      <button class="cat" data-name="general knowledge gk" onclick="start('gk')"><span>🌍</span>General Knowledge</button>
+      <button class="cat" data-name="science" onclick="start('science')"><span>🔬</span>Science</button>
+      <button class="cat" data-name="math maths गणित" onclick="start('math')"><span>➗</span>Maths</button>
+      <button class="cat" data-name="cricket" onclick="start('cricket')"><span>🏏</span>Cricket</button>
+      <button class="cat" data-name="bihar board class 9 नौ" onclick="start('bihar9')"><span>📘</span>Bihar Board Class 9</button>
+      <button class="cat" data-name="bihar board class 10 दस" onclick="start('bihar10')"><span>📚</span>Bihar Board Class 10</button>
+    </div>
+    <p class="small muted" style="margin-top:18px">हर quiz में random questions • 15 सेकंड प्रति प्रश्न • 3 lives</p>
+    <div style="margin-top:22px;padding-top:14px;border-top:1px solid #e2e8f0">
+      <button class="secondary" onclick="showPage('about')">About</button>
+      <button class="secondary" onclick="showPage('privacy')">Privacy</button>
+      <button class="secondary" onclick="showPage('contact')">Contact</button>
+    </div>
+  </div>
+
+  <div id="quiz" class="card hidden">
+    <div class="top">
+      <button class="secondary" onclick="goHome()">← Home</button>
+      <div class="stats">
+        <div class="pill">❤️ <span id="lives">3</span></div>
+        <div class="pill">⏱️ <span id="timer">15</span>s</div>
+        <div class="pill">🔥 <span id="streak">0</span></div>
+        <div class="pill">🏆 <span id="best">0</span></div>
+      </div>
+    </div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div class="top">
+      <div class="pill">Level <span id="level">1</span></div>
+      <div class="pill"><span id="qno">1</span>/<span id="total">10</span></div>
+    </div>
+    <div class="subject" id="categoryName"></div>
+    <h2 id="question">Question</h2>
+    <div id="options"></div>
+    <button id="nextBtn" class="primary hidden" onclick="nextQuestion()">Next Question →</button>
+  </div>
+
+  <div id="about" class="card hidden page">
+    <button class="secondary" onclick="goHome()">← Home</button>
+    <h2>🎯 About Quiz Challenge</h2>
+    <p>Quiz Challenge एक free educational quiz website है जहाँ विद्यार्थी GK, Science, Maths, Cricket और Bihar Board practice questions हल कर सकते हैं।</p>
+    <h3>क्या मिलेगा?</h3>
+    <ul>
+      <li>MCQ practice और instant answer checking</li>
+      <li>Timer, lives, streak और level system</li>
+      <li>Class 9–10 practice categories</li>
+      <li>Player score और quiz history</li>
+    </ul>
+    <p class="muted small">Questions और educational content समय के साथ अपडेट किए जा सकते हैं।</p>
+  </div>
+
+  <div id="privacy" class="card hidden page">
+    <button class="secondary" onclick="goHome()">← Home</button>
+    <h2>🔒 Privacy Policy</h2>
+    <p>Quiz Challenge का यह version profile name, high score, streak और quiz history जैसी जानकारी आपके browser के local storage में रख सकता है ताकि game की सुविधाएँ काम कर सकें।</p>
+    <p>यह जानकारी इस HTML game से अपने-आप किसी server पर भेजी नहीं जाती। Browser data हटाने पर local game data भी हट सकता है।</p>
+    <p>यदि भविष्य में analytics, advertisements या online accounts जोड़े जाते हैं, तो उनकी जानकारी इस privacy page में अलग से स्पष्ट की जाएगी।</p>
+  </div>
+
+  <div id="contact" class="card hidden page">
+    <button class="secondary" onclick="goHome()">← Home</button>
+    <h2>📩 Contact</h2>
+    <p>Quiz Challenge के बारे में feedback, question correction या technical issue बताने के लिए नीचे अपना message लिखें।</p>
+    <textarea id="contactMsg" maxlength="1000" placeholder="अपना message लिखें..." style="width:100%;min-height:130px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;font:inherit"></textarea>
+    <button class="primary" onclick="saveFeedback()" style="margin-top:10px">Save Feedback</button>
+    <p id="feedbackStatus" class="muted"></p>
+  </div>
+
+  <div id="history" class="card hidden">
+    <div class="top"><h2>📊 आपकी History</h2><button class="secondary" onclick="hide('history');show('home')">← Back</button></div>
+    <div id="historyList"></div>
+    <button class="danger" onclick="clearHistory()">Clear History</button>
+  </div>
+
+  <div id="result" class="card result hidden">
+    <div class="logo">🏆</div>
+    <h1>Quiz Complete!</h1>
+    <div class="score" id="finalScore">0</div>
+    <p id="resultText"></p>
+    <div class="stats" style="justify-content:center;margin:18px 0">
+      <div class="pill">सही: <span id="correctCount">0</span></div>
+      <div class="pill">गलत: <span id="wrongCount">0</span></div>
+      <div class="pill">Best Streak: <span id="finalStreak">0</span></div>
+    </div>
+    <button class="primary" onclick="restart()">🔄 Play Again</button>
+    <button class="secondary" onclick="goHome()">🏠 Home</button>
+  </div>
+</div>
+
+<script>
+const banks={
+gk:[
+["भारत की राजधानी क्या है?",["मुंबई","नई दिल्ली","पटना","कोलकाता"],1],
+["भारत का राष्ट्रीय पशु कौन है?",["शेर","बाघ","हाथी","मोर"],1],
+["सूर्य के सबसे निकट कौन-सा ग्रह है?",["पृथ्वी","मंगल","बुध","शुक्र"],2],
+["विश्व का सबसे बड़ा महासागर कौन-सा है?",["हिंद महासागर","अटलांटिक","प्रशांत","आर्कटिक"],2],
+["भारत का राष्ट्रीय खेल आधिकारिक रूप से क्या है?",["हॉकी","क्रिकेट","कबड्डी","कोई आधिकारिक राष्ट्रीय खेल नहीं"],3],
+["जल का रासायनिक सूत्र क्या है?",["CO2","H2O","O2","NaCl"],1],
+["भारत में गणतंत्र दिवस कब मनाया जाता है?",["15 अगस्त","26 जनवरी","2 अक्टूबर","14 नवंबर"],1],
+["पृथ्वी का उपग्रह कौन है?",["सूर्य","चंद्रमा","मंगल","शुक्र"],1],
+["ताजमहल किस शहर में है?",["जयपुर","आगरा","दिल्ली","लखनऊ"],1],
+["भारत का राष्ट्रीय फूल कौन है?",["गुलाब","कमल","सूरजमुखी","चमेली"],1]
+],
+science:[
+["पौधों में भोजन बनाने की प्रक्रिया?",["श्वसन","प्रकाश संश्लेषण","पाचन","उत्सर्जन"],1],
+["मानव शरीर में रक्त पंप करने वाला अंग?",["फेफड़ा","हृदय","यकृत","गुर्दा"],1],
+["ऑक्सीजन का रासायनिक प्रतीक?",["O","Ox","Og","C"],0],
+["बल की SI इकाई?",["जूल","वाट","न्यूटन","पास्कल"],2],
+["पानी का क्वथनांक सामान्य दाब पर?",["50°C","75°C","100°C","120°C"],2],
+["विद्युत धारा की SI इकाई?",["वोल्ट","एम्पियर","ओम","वाट"],1],
+["CO2 में कौन-सा तत्व होता है?",["कार्बन और ऑक्सीजन","कैल्शियम","हाइड्रोजन","नाइट्रोजन"],0],
+["मानव में श्वसन का मुख्य अंग?",["हृदय","फेफड़े","त्वचा","मस्तिष्क"],1],
+["ध्वनि किसमें सबसे तेज चलती है?",["निर्वात","ठोस","वायु","जल"],1],
+["अम्ल का pH सामान्यतः?",["7 से कम","7","7 से अधिक","14 से अधिक"],0]
+],
+math:[
+["12 + 18 = ?",["20","25","30","35"],2],
+["15 × 4 = ?",["45","50","60","75"],2],
+["144 का वर्गमूल?",["10","11","12","14"],2],
+["3/4 का दशमलव रूप?",["0.25","0.5","0.75","1.25"],2],
+["2x = 18, x = ?",["6","8","9","12"],2],
+["त्रिभुज के कोणों का योग?",["90°","180°","270°","360°"],1],
+["5² = ?",["10","15","20","25"],3],
+["100 का 25%?",["20","25","30","40"],1],
+["एक दर्जन में कितनी वस्तुएँ?",["10","12","14","15"],1],
+["यदि a=5, तो a+7=?",["10","11","12","13"],2]
+],
+cricket:[
+["क्रिकेट टीम में मैदान पर कितने खिलाड़ी होते हैं?",["9","10","11","12"],2],
+["एक ओवर में सामान्यतः कितनी गेंदें होती हैं?",["4","5","6","8"],2],
+["LBW का पूरा नाम?",["Leg Before Wicket","Long Ball Wide","Left Bat Wicket","Leg Ball Win"],0],
+["क्रिकेट में विकेटों की संख्या?",["6","8","10","12"],2],
+["टेस्ट मैच अधिकतम कितने दिनों का होता है?",["3","4","5","7"],2],
+["एकदिवसीय मैच में एक पारी में अधिकतम सामान्य ओवर?",["20","40","50","60"],2],
+["बल्लेबाज के बल्ले से बिना दौड़े सीमा पार गेंद जाए तो?",["4","5","6","8"],2],
+["नो-बॉल पर सामान्यतः बल्लेबाजी टीम को अतिरिक्त रन?",["0","1","2","3"],1],
+["विकेटकीपर किसके पीछे खड़ा होता है?",["बॉलर","बल्लेबाज","अंपायर","स्कोरर"],1],
+["T20 में एक टीम के लिए सामान्यतः ओवर?",["10","20","30","50"],1]
+],
+bihar9:[
+["कक्षा 9 में विज्ञान का एक प्रमुख भाग कौन-सा है?",["जीव विज्ञान","केवल इतिहास","केवल भूगोल","केवल व्याकरण"],0],
+["बल की SI इकाई क्या है?",["न्यूटन","जूल","वाट","मीटर"],0],
+["संख्या 0 किस प्रकार की संख्या है?",["प्राकृतिक संख्या (हर परिभाषा में)","पूर्ण संख्या","केवल ऋणात्मक","अपरिमेय"],1],
+["हिंदी में संज्ञा किसे कहते हैं?",["नाम बताने वाले शब्द को","काम बताने वाले शब्द को","गुण बताने वाले शब्द को","संबंध बताने वाले शब्द को"],0],
+["पृथ्वी का एकमात्र प्राकृतिक उपग्रह?",["मंगल","चंद्रमा","सूर्य","शुक्र"],1],
+["भारत का संविधान कब लागू हुआ?",["15 अगस्त 1947","26 जनवरी 1950","2 अक्टूबर 1950","26 नवंबर 1949"],1],
+["पौधों में प्रकाश संश्लेषण के लिए मुख्य गैस?",["ऑक्सीजन","कार्बन डाइऑक्साइड","नाइट्रोजन","हीलियम"],1],
+["त्रिभुज के तीनों कोणों का योग?",["90°","180°","270°","360°"],1],
+["'राम' किस प्रकार की संज्ञा का उदाहरण है?",["व्यक्तिवाचक","जातिवाचक","भाववाचक","समूहवाचक"],0],
+["जल का सूत्र?",["H2O","CO2","O2","H2"],0]
+],
+bihar10:[
+["द्विघात समीकरण का सामान्य रूप?",["ax+b=0","ax²+bx+c=0","a+b+c=0","x+y=0"],1],
+["प्रकाश संश्लेषण में कौन-सी गैस प्रयुक्त होती है?",["O2","CO2","H2","N2"],1],
+["मानव रक्त का लाल रंग किसके कारण?",["क्लोरोफिल","हीमोग्लोबिन","इंसुलिन","प्लाज्मा"],1],
+["भारत का सर्वोच्च न्यायालय कहाँ है?",["पटना","मुंबई","नई दिल्ली","कोलकाता"],2],
+["विद्युत शक्ति की SI इकाई?",["वोल्ट","ओम","वाट","एम्पियर"],2],
+["10% of 250 = ?",["15","20","25","30"],2],
+["अम्ल नीले लिटमस को किस रंग में बदलता है?",["लाल","हरा","पीला","नीला"],0],
+["लोकतंत्र में अंतिम शक्ति सामान्यतः किसके पास मानी जाती है?",["जनता","केवल अधिकारी","केवल न्यायालय","केवल सेना"],0],
+["DNA का पूरा नाम?",["Deoxyribonucleic Acid","Dynamic Nuclear Acid","Double Nitrogen Atom","None"],0],
+["वृत्त का क्षेत्रफल?",["2πr","πr²","πd","r²/2"],1]
+]
+};
+const names={gk:"🌍 General Knowledge",science:"🔬 Science",math:"➗ Maths",cricket:"🏏 Cricket",bihar9:"📘 Bihar Board Class 9",bihar10:"📚 Bihar Board Class 10"};
+let qs=[],idx=0,score=0,lives=3,streak=0,bestStreak=0,timer=15,timerId=null,answered=false,category="";
+let best=Number(localStorage.getItem("quizBest")||0), savedStreak=Number(localStorage.getItem("quizBestStreak")||0);
+document.getElementById("homeBest").textContent=best; document.getElementById("homeStreak").textContent=savedStreak;
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5)}
+function start(cat){
+ category=cat; qs=shuffle(banks[cat]).slice(0,10); idx=0; score=0; lives=3; streak=0; bestStreak=0;
+ show("quiz"); hide("home"); hide("result"); document.getElementById("total").textContent=qs.length; render();
+}
+function render(){
+ answered=false; clearInterval(timerId); timer=15;
+ const q=qs[idx]; document.getElementById("question").textContent=q[0];
+ document.getElementById("qno").textContent=idx+1; document.getElementById("categoryName").textContent=names[category];
+ document.getElementById("lives").textContent=lives; document.getElementById("streak").textContent=streak;
+ document.getElementById("best").textContent=Math.max(best,score); document.getElementById("level").textContent=Math.floor(idx/3)+1;
+ document.getElementById("bar").style.width=((idx/qs.length)*100)+"%";
+ const box=document.getElementById("options"); box.innerHTML="";
+ shuffle(q[1].map((x,i)=>({x,i}))).forEach(o=>{
+   const b=document.createElement("button"); b.className="option"; b.textContent=o.x;
+   b.onclick=()=>answer(o.i,b); box.appendChild(b);
+ });
+ document.getElementById("nextBtn").classList.add("hidden");
+ document.getElementById("timer").textContent=timer;
+ timerId=setInterval(()=>{timer--;document.getElementById("timer").textContent=timer;if(timer<=0) answer(-1,null)},1000);
+}
+function answer(choice,btn){
+ if(answered)return; answered=true; clearInterval(timerId);
+ const q=qs[idx], correct=q[2], buttons=[...document.querySelectorAll(".option")];
+ buttons.forEach(b=>b.disabled=true);
+ const correctBtn=buttons.find(b=>b.textContent===q[1][correct]); if(correctBtn) correctBtn.classList.add("correct");
+ if(choice===correct){
+   if(btn)btn.classList.add("correct"); streak++; bestStreak=Math.max(bestStreak,streak);
+   score+=10+(streak>=3?5:0)+(timer>=10?2:0);
+ }else{
+   if(btn)btn.classList.add("wrong"); lives--; streak=0;
+   document.getElementById("lives").textContent=lives;
+ }
+ document.getElementById("streak").textContent=streak;
+ if(lives<=0){setTimeout(finish,500);return}
+ document.getElementById("nextBtn").classList.remove("hidden");
+}
+function nextQuestion(){idx++; if(idx>=qs.length)finish(); else render()}
+function finish(){
+ clearInterval(timerId); hide("quiz"); show("result");
+ const total=qs.length*10, correct=Math.max(0,Math.round(score/10)); 
+ document.getElementById("finalScore").textContent=score;
+ document.getElementById("correctCount").textContent=Math.min(qs.length,correct);
+ document.getElementById("wrongCount").textContent=qs.length-Math.min(qs.length,correct);
+ document.getElementById("finalStreak").textContent=bestStreak;
+ document.getElementById("resultText").textContent=score>=total*.8?"🔥 बहुत बढ़िया! Practice जारी रखें।":score>=total*.5?"👍 अच्छा प्रयास!":"💪 फिर से खेलें और अपना score बढ़ाएँ।";
+ if(score>best){best=score;localStorage.setItem("quizBest",best)}
+ if(bestStreak>savedStreak){savedStreak=bestStreak;localStorage.setItem("quizBestStreak",savedStreak)}
+}
+function restart(){start(category)}
+function goHome(){clearInterval(timerId);["quiz","result","history","about","privacy","contact"].forEach(x=>hide(x));show("home");document.getElementById("homeBest").textContent=best;document.getElementById("homeStreak").textContent=savedStreak}
+function show(id){document.getElementById(id).classList.remove("hidden")}
+function hide(id){document.getElementById(id).classList.add("hidden")}
+
+
+function showPage(id){
+  ["home","quiz","result","history","about","privacy","contact"].forEach(x=>hide(x));
+  show(id);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function saveFeedback(){
+  const m=document.getElementById("contactMsg").value.trim();
+  const s=document.getElementById("feedbackStatus");
+  if(!m){s.textContent="पहले message लिखें।";return}
+  localStorage.setItem("quizFeedback",m);
+  s.textContent="✅ Feedback इस device पर save हो गया।";
+}
+
+
+/* V6 expanded question pool */
+banks.gk.push(
+["भारत का राष्ट्रीय वृक्ष कौन-सा है?",["बरगद","नीम","पीपल","आम"],0],
+["बिहार की राजधानी क्या है?",["गया","पटना","भागलपुर","मुजफ्फरपुर"],1],
+["भारत की मुद्रा क्या है?",["डॉलर","रुपया","येन","पाउंड"],1],
+["विश्व पर्यावरण दिवस कब मनाया जाता है?",["5 जून","15 अगस्त","22 अप्रैल","1 मई"],0],
+["भारत का राष्ट्रीय पक्षी कौन है?",["तोता","मोर","कबूतर","गरुड़"],1]
+);
+banks.science.push(
+["विद्युत प्रतिरोध की SI इकाई?",["ओम","वोल्ट","एम्पियर","कूलॉम"],0],
+["मानव शरीर का सबसे बड़ा अंग?",["हृदय","त्वचा","यकृत","फेफड़ा"],1],
+["पौधे पानी मुख्यतः किस भाग से लेते हैं?",["फूल","जड़","फल","तना"],1],
+["पृथ्वी पर गुरुत्वीय त्वरण लगभग?",["9.8 m/s²","98 m/s²","0.98 m/s²","8 m/s²"],0],
+["लोहे का रासायनिक प्रतीक?",["Ir","Fe","In","F"],1]
+);
+banks.math.push(
+["25 × 4 = ?",["50","75","100","125"],2],
+["√81 = ?",["7","8","9","10"],2],
+["7 × 8 = ?",["54","56","64","48"],1],
+["200 का 15%?",["20","25","30","35"],2],
+["यदि x+5=12, x=?",["5","6","7","8"],2]
+);
+banks.cricket.push(
+["क्रिकेट पिच की लंबाई कितनी होती है?",["20 yards","22 yards","24 yards","18 yards"],1],
+["एक टेस्ट मैच में प्रत्येक टीम की कितनी पारियाँ हो सकती हैं?",["1","2","3","4"],1],
+["क्रिकेट में 'duck' का अर्थ?",["छक्का","शून्य रन पर आउट","नो-बॉल","वाइड"],1],
+["एक विकेट में कितने स्टंप होते हैं?",["2","3","4","5"],1],
+["बाउंड्री पर गेंद जमीन छूकर जाए तो सामान्यतः?",["2","3","4","6"],2]
+);
+banks.bihar9.push(
+["परमाणु का केंद्र क्या कहलाता है?",["इलेक्ट्रॉन","नाभिक","कक्षा","आयन"],1],
+["गति का SI मात्रक?",["m/s","kg","N","J"],0],
+["संविधान दिवस भारत में कब मनाया जाता है?",["26 नवंबर","26 जनवरी","15 अगस्त","2 अक्टूबर"],0],
+["कोशिका का नियंत्रण केंद्र?",["माइटोकॉन्ड्रिया","नाभिक","राइबोसोम","कोशिका भित्ति"],1],
+["भिन्न 3/5 का दशमलव रूप?",["0.3","0.5","0.6","0.8"],2]
+);
+banks.bihar10.push(
+["बहुपद का घात 0 होने पर वह?",["रैखिक","द्विघात","अचर","घन"],2],
+["ओम का नियम?",["V=IR","P=VI²","I=VR","R=VI"],0],
+["अम्ल का स्वाद सामान्यतः?",["मीठा","खट्टा","कड़वा","नमकीन"],1],
+["भारत में मतदान की न्यूनतम आयु?",["16","18","21","25"],1],
+["पाइथागोरस प्रमेय किस त्रिभुज पर लागू होता है?",["समबाहु","समद्विबाहु","समकोण","विषमबाहु"],2]
+);
+
+let player=localStorage.getItem("quizPlayer")||"";
+const historyData=JSON.parse(localStorage.getItem("quizHistory")||"[]");
+if(player){document.getElementById("playerName").value=player;document.getElementById("welcome").textContent="👋 Welcome, "+player+"!"}
+
+function savePlayer(){
+  const n=document.getElementById("playerName").value.trim();
+  if(!n)return;
+  player=n;localStorage.setItem("quizPlayer",player);
+  document.getElementById("welcome").textContent="👋 Welcome, "+player+"!";
+}
+function toggleTheme(){document.body.classList.toggle("dark");localStorage.setItem("quizDark",document.body.classList.contains("dark")?"1":"0")}
+if(localStorage.getItem("quizDark")==="1")document.body.classList.add("dark");
+
+function filterCategories(){
+  const q=document.getElementById("searchBox").value.toLowerCase();
+  document.querySelectorAll("#categoryGrid .cat").forEach(b=>{
+    b.style.display=b.dataset.name.includes(q)?"":"none";
+  });
+}
+function showHistory(){
+  hide("home");hide("quiz");hide("result");show("history");
+  const box=document.getElementById("historyList");
+  const h=JSON.parse(localStorage.getItem("quizHistory")||"[]");
+  if(!h.length){box.innerHTML='<p class="muted">अभी कोई quiz history नहीं है।</p>';return}
+  box.innerHTML=h.slice(0,15).map(x=>`<div class="historyItem"><span>${x.cat}<br><small>${x.date}</small></span><strong>${x.score} pts</strong></div>`).join("");
+}
+function clearHistory(){localStorage.removeItem("quizHistory");showHistory()}
+
+const oldFinish=finish;
+finish=function(){
+  oldFinish();
+  const h=JSON.parse(localStorage.getItem("quizHistory")||"[]");
+  h.unshift({cat:names[category],score:score,date:new Date().toLocaleString("hi-IN")});
+  localStorage.setItem("quizHistory",JSON.stringify(h.slice(0,20)));
+};
+</script>
+</body>
+</html>
