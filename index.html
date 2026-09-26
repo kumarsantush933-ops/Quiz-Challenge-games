@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Challenge V3 + V4</title>
+<title>Quiz Challenge — Professional Edition</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);color:#172033}
 .app{max-width:900px;margin:auto;padding:18px}.card{background:white;border-radius:22px;padding:22px;box-shadow:0 10px 30px #0001;margin-top:14px}
@@ -29,12 +29,39 @@ input:focus{border-color:#6366f1}.tools input{max-width:420px}
 textarea{background:transparent;color:inherit}.dark textarea{border-color:#475569!important}
 .page p,.page li{line-height:1.65}.page h2{margin-top:18px}
 @media(max-width:600px){.profileRow,.tools{flex-direction:column}.topbar{padding-top:4px}}
+
+:root{
+  --primary:#4f46e5;--primary2:#7c3aed;--ink:#172033;--muted:#64748b;
+  --surface:#fff;--soft:#f5f7ff;--line:#e5e7eb;
+}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(99,102,241,.14),transparent 28%),
+    radial-gradient(circle at 90% 8%,rgba(124,58,237,.12),transparent 25%),
+    linear-gradient(135deg,#f8faff,#f7f8fc 50%,#eef2ff);
+}
+.app{max-width:980px;padding:16px 14px 28px}
+.card{border:1px solid rgba(99,102,241,.08);box-shadow:0 16px 45px rgba(15,23,42,.08)}
+.topbar{position:sticky;top:0;z-index:5;padding:8px 2px 14px;background:rgba(248,250,255,.84);backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:9px}.brandMark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:900;font-size:20px;box-shadow:0 7px 18px rgba(79,70,229,.25)}.brand strong{font-size:17px}.brandSub{font-size:11px;color:var(--muted);margin-top:1px}.version{background:linear-gradient(135deg,var(--primary),var(--primary2));margin-left:4px}
+.hero{padding:34px 22px}.heroLogo{width:76px;height:76px;border-radius:24px;margin:0 auto 14px;display:grid;place-items:center;font-size:38px;background:linear-gradient(135deg,#eef2ff,#ede9fe);box-shadow:inset 0 0 0 1px #e0e7ff}.hero h1{font-size:38px;letter-spacing:-1px;margin-bottom:8px}.heroSub{color:var(--muted);max-width:540px;margin:0 auto 18px}
+.profileRow{max-width:620px}.profileRow button{min-width:125px}.profileRow input{background:#fff}
+.statsHero{gap:10px}.statCard{display:flex;align-items:center;gap:10px;background:var(--soft);border:1px solid #e7e9ff;border-radius:16px;padding:11px 14px;min-width:145px;text-align:left}.statIcon{font-size:23px}.statCard b{display:block;font-size:19px}.statCard small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+.featureStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:680px;margin:12px auto 24px}.featureStrip>div{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:center}.featureStrip b{display:block;font-size:13px}.featureStrip span{font-size:11px;color:var(--muted)}
+.sectionHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 12px}.sectionHead h2{margin:0 0 4px}.sectionHead p{margin:0;color:var(--muted);font-size:13px}.liveDot{font-size:11px;font-weight:800;color:#16a34a;background:#dcfce7;border-radius:999px;padding:6px 9px;white-space:nowrap}
+.cat{border:1px solid #e7eaf5;background:linear-gradient(180deg,#fff,#f8f9ff);box-shadow:0 6px 18px rgba(15,23,42,.04);transition:transform .2s,box-shadow .2s,border-color .2s}.cat:hover{background:#fff;box-shadow:0 10px 24px rgba(79,70,229,.12);border-color:#c7d2fe}
+.howItWorks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 4px}.howItWorks>div{display:flex;align-items:center;gap:9px;text-align:left;padding:11px;border-radius:14px;background:#f8fafc}.howItWorks span{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eef2ff;color:var(--primary);font-weight:900}.howItWorks b,.howItWorks small{display:block}.howItWorks small{color:var(--muted);font-size:11px;margin-top:2px}
+.siteFooter{display:flex;justify-content:space-between;gap:12px;color:#64748b;font-size:11px;padding:14px 4px}
+.dark{background:#0b1220;color:#e5e7eb}.dark .topbar{background:rgba(11,18,32,.84)}.dark .statCard,.dark .featureStrip>div,.dark .howItWorks>div{background:#172033;border-color:#334155}.dark .heroSub,.dark .sectionHead p{color:#94a3b8}.dark .cat{background:linear-gradient(180deg,#1e293b,#172033);border-color:#334155}.dark .cat:hover{background:#243247}.dark .siteFooter{color:#94a3b8}
+@media(max-width:600px){.hero h1{font-size:30px}.featureStrip,.howItWorks{grid-template-columns:1fr}.statCard{flex:1;min-width:0}.statsHero{display:grid;grid-template-columns:1fr 1fr}.statsHero .statCard:last-child{grid-column:1/-1}.sectionHead{align-items:flex-start}.siteFooter{flex-direction:column}.topbar button{padding:10px 11px;font-size:13px}}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div><strong>🎯 Quiz Challenge</strong><span class="version">V6</span></div>
+    <div class="brand"><div class="brandMark">Q</div><div><strong>Quiz Challenge</strong><div class="brandSub">Learn • Play • Improve</div></div><span class="version">V7</span></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <button class="secondary" onclick="showPage('about')">About</button>
       <button class="secondary" onclick="showPage('privacy')">Privacy</button>
@@ -43,23 +70,29 @@ textarea{background:transparent;color:inherit}.dark textarea{border-color:#47556
     </div>
   </div>
   <div id="home" class="card hero">
-    <div class="logo">🎯</div>
+    <div class="heroLogo">🎯</div>
     <h1>Quiz Challenge</h1>
-    <p class="muted">V5 FINAL • Quiz, Levels, Streak, Progress & Practice</p>
+    <p class="heroSub">Test your knowledge, build streaks and improve your score.</p>
     <div class="profileRow">
       <input id="playerName" maxlength="20" placeholder="अपना नाम लिखें">
       <button class="primary" onclick="savePlayer()">Save Profile</button>
     </div>
     <div id="welcome" class="small muted"></div>
-    <div class="stats" style="justify-content:center;margin:18px 0">
-      <div class="pill">🏆 Best Score: <span id="homeBest">0</span></div>
-      <div class="pill">🔥 Best Streak: <span id="homeStreak">0</span></div>
+    <div class="stats statsHero" style="justify-content:center;margin:18px 0">
+      <div class="statCard"><span class="statIcon">🏆</span><div><b id="homeBest">0</b><small>Best Score</small></div></div>
+      <div class="statCard"><span class="statIcon">🔥</span><div><b id="homeStreak">0</b><small>Best Streak</small></div></div>
+      <div class="statCard"><span class="statIcon">🎮</span><div><b>6</b><small>Categories</small></div></div>
+    </div>
+    <div class="featureStrip">
+      <div><b>⏱️ 15s</b><span>Quick rounds</span></div>
+      <div><b>❤️ 3 Lives</b><span>Keep playing</span></div>
+      <div><b>⚡ Streak</b><span>Build momentum</span></div>
     </div>
     <div class="tools">
       <input id="searchBox" oninput="filterCategories()" placeholder="🔎 Category खोजें...">
       <button class="secondary" onclick="showHistory()">📊 History</button>
     </div>
-    <h2>Category चुनें</h2>
+    <div class="sectionHead"><div><h2>Choose a category</h2><p>Pick a topic and start your challenge.</p></div><span class="liveDot">● LIVE</span></div>
     <div id="categoryGrid" class="grid">
       <button class="cat" data-name="general knowledge gk" onclick="start('gk')"><span>🌍</span>General Knowledge</button>
       <button class="cat" data-name="science" onclick="start('science')"><span>🔬</span>Science</button>
@@ -68,7 +101,12 @@ textarea{background:transparent;color:inherit}.dark textarea{border-color:#47556
       <button class="cat" data-name="bihar board class 9 नौ" onclick="start('bihar9')"><span>📘</span>Bihar Board Class 9</button>
       <button class="cat" data-name="bihar board class 10 दस" onclick="start('bihar10')"><span>📚</span>Bihar Board Class 10</button>
     </div>
-    <p class="small muted" style="margin-top:18px">हर quiz में random questions • 15 सेकंड प्रति प्रश्न • 3 lives</p>
+    <p class="small muted" style="margin-top:18px">Random questions • 15 seconds per question • 3 lives</p>
+    <div class="howItWorks">
+      <div><span>1</span><div><b>Choose</b><small>Select a category.</small></div></div>
+      <div><span>2</span><div><b>Play</b><small>Answer before time runs out.</small></div></div>
+      <div><span>3</span><div><b>Improve</b><small>Track your score and streak.</small></div></div>
+    </div>
     <div style="margin-top:22px;padding-top:14px;border-top:1px solid #e2e8f0">
       <button class="secondary" onclick="showPage('about')">About</button>
       <button class="secondary" onclick="showPage('privacy')">Privacy</button>
@@ -147,6 +185,10 @@ textarea{background:transparent;color:inherit}.dark textarea{border-color:#47556
     <button class="primary" onclick="restart()">🔄 Play Again</button>
     <button class="secondary" onclick="goHome()">🏠 Home</button>
   </div>
+  <footer class="siteFooter">
+    <span>© 2026 Quiz Challenge</span>
+    <span>Built for learning & practice</span>
+  </footer>
 </div>
 
 <script>
@@ -298,7 +340,7 @@ function saveFeedback(){
 }
 
 
-/* V6 expanded question pool */
+/* V7 expanded question pool */
 banks.gk.push(
 ["भारत का राष्ट्रीय वृक्ष कौन-सा है?",["बरगद","नीम","पीपल","आम"],0],
 ["बिहार की राजधानी क्या है?",["गया","पटना","भागलपुर","मुजफ्फरपुर"],1],
